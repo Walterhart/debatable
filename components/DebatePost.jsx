@@ -2,6 +2,7 @@ import React from "react"
 import PostComments from "./PostComments"
 import PostContent from "./PostContent"
 import postData from "../postData"
+import {nanoid} from "nanoid"
 
 export default function DebatePost() {
     
@@ -25,25 +26,59 @@ The form doesn't work. Your task is to make it a controlled form that adds a com
        if you'd like. 
 */
     
+    const DEFAULT_FORM_DATA = {
+        id: nanoid(), 
+        userName: "",
+        comment: "",
+        isAnonymous: false
+    }
+    
     const [comments, setComments] = React.useState(postData.comments)
-
+    const [userInput, setUserInput] = React.useState(DEFAULT_FORM_DATA)
+    
+    const handleOnChange = (event) =>{
+         const {name, value, type} = event.target
+      
+         setUserInput(prevInput =>({
+             ...prevInput,
+             [name]:  type === "checkbox"? !prevInput.isAnonymous : value
+         }))
+    }
+    
+    const addComment = (e) =>{
+        e.preventDefault()
+        setComments(prevComments => [...prevComments,{id: userInput.id, userName: userInput.userName, commentText: userInput.comment, isAnonymous: userInput.isAnonymous }])
+        setUserInput(DEFAULT_FORM_DATA)
+    }
+    
     return (
         <div className="post-container">
             <PostContent data={{...postData}} />
             <PostComments data={comments} />
-            <form>
+            <form onSubmit={addComment}>
                 <input
                     className="text-input"
                     type="text"
                     placeholder="Enter username."
+                    name="userName"
+                    onChange={handleOnChange}
+                    value={userInput.userName}
+                    required
                 />
                 <textarea
                     placeholder="What do you think?"
+                    name="comment"
+                    onChange={handleOnChange}
+                    value={userInput.comment}
+                    required
                 />
                 <label>
                     <input 
                         className="checkbox"
                         type="checkbox"
+                        name="isAnonymous"
+                        checked={userInput.isAnonymous}
+                        onChange={handleOnChange}
                     />
                     Post anonymously?
                 </label>
