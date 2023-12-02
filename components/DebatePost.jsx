@@ -37,11 +37,11 @@ The form doesn't work. Your task is to make it a controlled form that adds a com
     const [userInput, setUserInput] = React.useState(DEFAULT_FORM_DATA)
     
     const handleOnChange = (event) =>{
-         const {name, value, type} = event.target
+         const {name, value, type, checked} = event.target
       
          setUserInput(prevInput =>({
              ...prevInput,
-             [name]:  type === "checkbox"? !prevInput.isAnonymous : value
+             [name]:  type === "checkbox"?  checked: value
          }))
     }
     
